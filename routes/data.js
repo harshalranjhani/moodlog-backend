@@ -4,6 +4,6 @@ const dataController = require('../controllers/dataController');
 
 router.post('/', dataController.predict);
 
-router.post('/', dataController.receiveData);
+router.post('/receive', dataController.receiveData);
 
 module.exports = router;
