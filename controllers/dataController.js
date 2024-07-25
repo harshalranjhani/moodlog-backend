@@ -37,10 +37,12 @@ exports.predict = async (req, res) => {
     const moodResponse = await predictMood(temperature, humidity);
     const mood = moodResponse.mood;
     const subtitle = moodResponse.subtitle;
+    const icon = moodResponse.icon;
 
     res.status(200).send({
       mood,
       subtitle,
+      icon,
     });
   } catch (error) {
     console.error(error);
@@ -71,7 +73,15 @@ exports.getSuggestions = async (req, res) => {
 };
 
 const predictMood = async (temperature, humidity) => {
-  const prompt = `Based on a body temperature of ${temperature}°C and a humidity level of ${humidity}%, predict the user's mood. Provide the mood in one word and a subtitle as a one-line message about the mood.`;
+  const prompt = `Based on a body temperature of ${temperature}°C and a humidity level of ${humidity}%, predict the user's mood. Provide the mood in one word and a subtitle as a one-line message about the mood. Also suggest an icon for the mood from the following list: 
+  [
+  'happy-outline',
+  'sad-outline',
+  'rocket-outline',
+  'alert-outline',
+  'warning-outline',
+  'leaf-outline'
+]`;
 
   const completion = await openai.chat.completions.create({
     messages: [
@@ -85,8 +95,9 @@ const predictMood = async (temperature, humidity) => {
   const moodParts = moodText.split("\n");
   const mood = moodParts[0].trim();
   const subtitle = moodParts[1]?.trim();
+  const icon = moodParts[2]?.trim();
 
-  return { mood, subtitle };
+  return { mood, subtitle, icon };
 };
 
 const getSuggestion = async (mood) => {
