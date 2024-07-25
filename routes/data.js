@@ -1,9 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const dataController = require('../controllers/dataController');
+const dataController = require("../controllers/dataController");
 
-router.post('/predict', dataController.predict);
-router.post('/suggestions', dataController.getSuggestions);
-router.post('/receive', dataController.receiveData);
+router.post("/suggestions", dataController.getSuggestions);
 
 module.exports = router;

@@ -1,56 +1,11 @@
 const axios = require("axios");
 const OpenAI = require("openai");
+const broadcastPrediction = require("../index.js");
+console.log("broadcastPrediction", broadcastPrediction);
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-exports.receiveData = async (req, res) => {
-  const { temperature, humidity } = req.body;
-
-  if (!temperature || !humidity) {
-    return res
-      .status(400)
-      .send({ error: "Temperature and humidity are required" });
-  }
-
-  try {
-    res
-      .status(200)
-      .send({ message: "Data received successfully", temperature, humidity });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: "Failed to receive data" });
-  }
-};
-
-exports.predict = async (req, res) => {
-  const { temperature, humidity } = req.body;
-
-  if (!temperature || !humidity) {
-    return res
-      .status(400)
-      .send({ error: "Temperature and humidity are required" });
-  }
-
-  try {
-    const moodResponse = await predictMood(temperature, humidity);
-    const mood = moodResponse.mood;
-    const subtitle = moodResponse.subtitle;
-    const icon = moodResponse.icon;
-
-    res.status(200).send({
-      mood,
-      subtitle,
-      icon,
-    });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .send({ error: "Failed to predict mood and get suggestion" });
-  }
-};
 
 exports.getSuggestions = async (req, res) => {
   const { mood } = req.body;
@@ -72,7 +27,7 @@ exports.getSuggestions = async (req, res) => {
   }
 };
 
-const predictMood = async (temperature, humidity) => {
+exports.predictMood = async (temperature, humidity) => {
   const prompt = `Based on a body temperature of ${temperature}°C and a humidity level of ${humidity}%, predict the user's mood. Provide the mood in one word and a subtitle as a one-line message about the mood. Also suggest an icon for the mood from the following list: 
   [
   'happy-outline',
@@ -81,7 +36,7 @@ const predictMood = async (temperature, humidity) => {
   'alert-outline',
   'warning-outline',
   'leaf-outline'
-]`;
+]. Give the responses in the format "[mood]\n[subtitle]\n[icon]".`;
 
   const completion = await openai.chat.completions.create({
     messages: [
