@@ -39,6 +39,8 @@ app.post("/data/predict", async (req, res) => {
       mood,
       subtitle,
       icon,
+      temperature: temperature,
+      humidity: humidity 
     };
 
     console.log("wss.clients", wss.clients);
