@@ -46,7 +46,7 @@ exports.predictMood = async (temperature, humidity) => {
       { role: "system", content: "You are a helpful assistant." },
       { role: "user", content: prompt },
     ],
-    model: "gpt-4",
+    model: "gpt-4o-mini",
   });
 
   const moodText = completion.choices[0].message.content;
@@ -66,7 +66,7 @@ const getSuggestion = async (mood) => {
       { role: "system", content: "You are a helpful assistant." },
       { role: "user", content: prompt },
     ],
-    model: "gpt-4",
+    model: "gpt-4o-mini",
   });
 
   const suggestionText = completion.choices[0].message.content;
