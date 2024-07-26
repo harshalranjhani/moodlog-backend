@@ -16,10 +16,9 @@ exports.getSuggestions = async (req, res) => {
 
   try {
     const suggestionResponse = await getSuggestion(mood);
-    const suggestions = suggestionResponse.suggestions;
 
     res.status(200).send({
-      suggestions,
+      suggestionResponse,
     });
   } catch (error) {
     console.error(error);
@@ -71,6 +70,7 @@ const getSuggestion = async (mood) => {
   });
 
   const suggestionText = completion.choices[0].message.content;
+  console.log(suggestionText)
 
   return { suggestionText };
 };
