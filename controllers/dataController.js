@@ -71,9 +71,6 @@ const getSuggestion = async (mood) => {
   });
 
   const suggestionText = completion.choices[0].message.content;
-  const suggestions = suggestionText
-    .split("\n")
-    .filter((line) => line.trim() !== "");
 
-  return { suggestions };
+  return { suggestionText };
 };
