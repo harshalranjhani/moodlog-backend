@@ -32,7 +32,7 @@ exports.predictMood = async (temperature, humidity) => {
     'happy-outline',
     'sad-outline',
     'rocket-outline',
-    'alert-circle',
+    'alert-outline',
     'warning-outline',
     'leaf-outline'
   ]. Format the response as:
