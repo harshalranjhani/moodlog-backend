@@ -60,7 +60,7 @@ exports.predictMood = async (temperature, humidity) => {
 };
 
 const getSuggestion = async (mood) => {
-  const prompt = `Based on the mood "${mood}", suggest some activities or ideas for what to do next. Provide a detailed and formatted list of suggestions.`;
+  const prompt = `Based on the mood "${mood}", suggest some activities or ideas for what to do next. Provide a detailed and formatted list of suggestions in html format. Provide html format and nothing else with proper formatting for headings, lists, etc.`;
 
   const completion = await openai.chat.completions.create({
     messages: [
