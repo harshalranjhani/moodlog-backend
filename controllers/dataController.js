@@ -76,7 +76,7 @@ const getSuggestion = async (mood) => {
   // return { suggestionText };
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-  const prompt = `Based on the mood "${mood}", suggest some activities or ideas for what to do next. Provide a detailed and formatted list of suggestions. Maximum 3 points. Do not mention anything other than the 3 points. Specify atleast 3 subpoints for each of those 3 points.`;
+  const prompt = `Based on the mood "${mood}", suggest some activities or ideas for what to do next. Provide a detailed and formatted list of suggestions. Maximum 3 points. Do not mention anything other than the 3 points. Specify atmost 2 subpoints for each of those 3 points. Make the subpoint headings brief. And the subpoint description should also be short.`;
 
   try {
     const result = await model.generateContent(prompt);
