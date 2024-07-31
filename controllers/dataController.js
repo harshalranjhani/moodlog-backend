@@ -42,9 +42,11 @@ exports.predictMood = async (temperature, humidity) => {
   Subtitle: [subtitle]
   Icon: [icon]`;
 
+  const systemPrompt = `You are an advanced AI capable of understanding and predicting human moods based on environmental factors such as temperature and humidity. You provide responses that are concise and formatted as requested.`;
+
   const completion = await openai.chat.completions.create({
     messages: [
-      { role: "system", content: "You are a helpful assistant." },
+      { role: "system", content: systemPrompt },
       { role: "user", content: prompt },
     ],
     model: "gpt-4o-mini",
