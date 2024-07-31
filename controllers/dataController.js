@@ -2,6 +2,8 @@ const axios = require("axios");
 const OpenAI = require("openai");
 const broadcastPrediction = require("../index.js");
 console.log("broadcastPrediction", broadcastPrediction);
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -39,7 +41,6 @@ exports.predictMood = async (temperature, humidity) => {
   [mood]
   [subtitle]
   [icon]`;
-  
 
   const completion = await openai.chat.completions.create({
     messages: [
@@ -59,18 +60,33 @@ exports.predictMood = async (temperature, humidity) => {
 };
 
 const getSuggestion = async (mood) => {
-  const prompt = `Based on the mood "${mood}", suggest some activities or ideas for what to do next. Provide a detailed and formatted list of suggestions. Maximum 3 points. Do not mention anything other than the 3 points.`;
+  // const prompt = `Based on the mood "${mood}", suggest some activities or ideas for what to do next. Provide a detailed and formatted list of suggestions. Maximum 3 points. Do not mention anything other than the 3 points.`;
 
-  const completion = await openai.chat.completions.create({
-    messages: [
-      { role: "system", content: "You are a helpful assistant." },
-      { role: "user", content: prompt },
-    ],
-    model: "gpt-4o-mini",
-  });
+  // const completion = await openai.chat.completions.create({
+  //   messages: [
+  //     { role: "system", content: "You are a helpful assistant." },
+  //     { role: "user", content: prompt },
+  //   ],
+  //   model: "gpt-4o-mini",
+  // });
 
-  const suggestionText = completion.choices[0].message.content;
-  console.log(suggestionText)
+  // const suggestionText = completion.choices[0].message.content;
+  // console.log(suggestionText)
 
-  return { suggestionText };
+  // return { suggestionText };
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+  const prompt = `Based on the mood "${mood}", suggest some activities or ideas for what to do next. Provide a detailed and formatted list of suggestions. Maximum 3 points. Do not mention anything other than the 3 points. Specify atleast 3 subpoints for each of those 3 points.`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const suggestionText = response.text();
+    console.log(suggestionText);
+
+    return { suggestionText };
+  } catch (e) {
+    console.log(e);
+    return { error: e.message };
+  }
 };
