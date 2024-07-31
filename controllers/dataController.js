@@ -38,9 +38,9 @@ exports.predictMood = async (temperature, humidity) => {
     'warning-outline',
     'leaf-outline'
   ]. Format the response as:
-  [mood]
-  [subtitle]
-  [icon]`;
+  Mood: [mood]
+  Subtitle: [subtitle]
+  Icon: [icon]`;
 
   const completion = await openai.chat.completions.create({
     messages: [
@@ -51,13 +51,16 @@ exports.predictMood = async (temperature, humidity) => {
   });
 
   const moodText = completion.choices[0].message.content;
-  const moodParts = moodText.split("\n");
-  const mood = moodParts[0].trim();
-  const subtitle = moodParts[1]?.trim();
-  const icon = moodParts[2]?.trim();
+
+  // Parsing the response to extract mood, subtitle, and icon
+  const mood = moodText.match(/Mood:\s*(.*)/)?.[1]?.trim();
+  const subtitle = moodText.match(/Subtitle:\s*(.*)/)?.[1]?.trim();
+  const icon = moodText.match(/Icon:\s*(.*)/)?.[1]?.trim();
 
   return { mood, subtitle, icon };
 };
+
+
 
 const getSuggestion = async (mood) => {
   // const prompt = `Based on the mood "${mood}", suggest some activities or ideas for what to do next. Provide a detailed and formatted list of suggestions. Maximum 3 points. Do not mention anything other than the 3 points.`;
