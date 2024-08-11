@@ -4,6 +4,8 @@ const broadcastPrediction = require("../index.js");
 console.log("broadcastPrediction", broadcastPrediction);
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genres = require("../genres.js");
+const {getRecommendationsFromSpotify} = require("./spotifyController");
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -62,6 +64,25 @@ exports.predictMood = async (temperature, humidity) => {
   return { mood, subtitle, icon };
 };
 
+exports.getMusicRecs = async (req, res) => {
+  try {
+    const { mood, subtitle } = req.body;
+
+    if (!mood || !subtitle) {
+      return res.status(400).send({ error: "Mood and subtitle are required" });
+    }
+
+    const data  = await getRecommendations(mood, subtitle);
+
+    res.status(200).send({
+      recs: data,
+    });
+  } catch(e) {
+    console.log(e);
+    res.status(500).send({ error: "Failed to get music suggestions" });
+  }
+} 
+
 
 
 const getSuggestion = async (mood) => {
@@ -95,3 +116,20 @@ const getSuggestion = async (mood) => {
     return { error: e.message };
   }
 };
+
+const getRecommendations = async (mood, subtitle) => {
+  const prompt = `Select up to 5 genres from the list based on the mood "${mood}" and the subtitle "${subtitle}". Provide only the genres, separated by commas, with no additional text.`;
+
+  const completion = await openai.chat.completions.create({
+    messages: [
+      { role: "system", content: `You are a music genre selector. Using the list of available genres: ${genres.join(", ")}, provide up to 5 genres that match the given mood and subtitle. Only return the genres.` },
+      { role: "user", content: prompt },
+    ],
+    model: "gpt-4o-mini",
+  });
+
+  const recommendationText = completion.choices[0].message.content.trim();
+
+  const data = await getRecommendationsFromSpotify(recommendationText);
+  return data;
+}
