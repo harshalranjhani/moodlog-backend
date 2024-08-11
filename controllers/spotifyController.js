@@ -47,7 +47,7 @@ const getAvailableGenres = async () => {
 const getRecommendationsFromSpotify = async (recs) => {
   const access_token = await getAuth();
 
-  const api_url = `https://api.spotify.com/v1/recommendations?seed_genres=${recs}`;
+  const api_url = `https://api.spotify.com/v1/recommendations?seed_genres=${recs}&limit=30`;
 
   try {
     const response = await axios.get(api_url, {
