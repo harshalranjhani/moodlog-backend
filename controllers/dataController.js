@@ -118,34 +118,34 @@ const getSuggestion = async (mood) => {
 };
 
 const getRecommendations = async (mood, subtitle) => {
-  // const prompt = `Select up to 5 genres from the list based on the mood "${mood}" and the subtitle "${subtitle}". Provide only the genres, separated by commas, with no additional text.`;
+  const prompt = `Select up to 5 genres from the list based on the mood "${mood}" and the subtitle "${subtitle}". Provide only the genres, separated by commas, with no additional text.`;
 
-  // const completion = await openai.chat.completions.create({
-  //   messages: [
-  //     { role: "system", content: `You are a music genre selector. Using the list of available genres: ${genres.join(", ")}, provide up to 5 genres that match the given mood and subtitle. Only return the genres.` },
-  //     { role: "user", content: prompt },
-  //   ],
-  //   model: "gpt-4o-mini",
-  // });
+  const completion = await openai.chat.completions.create({
+    messages: [
+      { role: "system", content: `You are a music genre selector. Using the list of available genres: ${genres.join(", ")}, provide up to 5 genres that match the given mood and subtitle. Only return the genres.` },
+      { role: "user", content: prompt },
+    ],
+    model: "gpt-4o-mini",
+  });
 
-  // const recommendationText = completion.choices[0].message.content.trim();
+  const recommendationText = completion.choices[0].message.content.trim();
 
-  // const data = await getRecommendationsFromSpotify(recommendationText);
-  // return data;
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const data = await getRecommendationsFromSpotify(recommendationText);
+  return data;
+  // const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-  const prompt = `Based on the mood "${mood} ${subtitle}", You are a music genre selector. Using the list of available genres: ${genres.join(", ")}, provide up to 5 genres that match the given mood and subtitle. Only return the genres`;
+  // const prompt = `Based on the mood "${mood} ${subtitle}", You are a music genre selector. Using the list of available genres: ${genres.join(", ")}, provide up to 5 genres that match the given mood and subtitle. Only return the genres`;
 
-  try {
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const suggestionText = response.text();
-    console.log(suggestionText);
+  // try {
+  //   const result = await model.generateContent(prompt);
+  //   const response = await result.response;
+  //   const suggestionText = response.text();
+  //   console.log(suggestionText);
 
-    const data = await getRecommendationsFromSpotify(suggestionText);
-    return data;
-  } catch (e) {
-    console.log(e);
-    return { error: e.message };
-  }
+  //   const data = await getRecommendationsFromSpotify(suggestionText);
+  //   return data;
+  // } catch (e) {
+  //   console.log(e);
+  //   return { error: e.message };
+  // }
 }
